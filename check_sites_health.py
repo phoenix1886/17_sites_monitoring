@@ -21,10 +21,7 @@ def load_urls4check(path):
 
 def is_server_respond_with_200(url):
     response = requests.get(url)
-    if response.ok:
-        return True
-    else:
-        return False
+    return response.ok
 
 
 def is_expiration_in_month(date_time):
