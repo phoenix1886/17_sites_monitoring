@@ -24,12 +24,12 @@ def is_server_respond_with_200(url):
     return response.ok
 
 
-def is_expiration_in_month(date_time):
-    if isinstance(date_time, list):
-        time_left = min(date_time) - datetime.now()
+def is_expiration_in_month(expiration_datetime):
+    if isinstance(expiration_datetime, list):
+        time_left = min(expiration_datetime) - datetime.now()
     else:
-        time_left = date_time - datetime.now()
-    return True if time_left.days < 31 else False
+        time_left = expiration_datetime - datetime.now()
+    return time_left.days < 31
 
 
 def get_domain_expiration_date(url):
@@ -37,15 +37,21 @@ def get_domain_expiration_date(url):
     return whois_obj.expiration_date
 
 
+def print_domain_info(site_url, is_response_ok, expires_in_month):
+        print('*' * 50)
+        print('Checking {}'.format(site_url))
+        print('\tServer respond with 200: {}'.format(is_response_ok))
+        print('\tExpiring in month: {}\n'.format(expires_in_month))
+
+
 if __name__ == '__main__':
     domains_file_path = parse_arguments()
     sites_to_check = load_urls4check(domains_file_path)
     for site_url in sites_to_check:
-        print('*' * 50)
-        print('Checking {}'.format(site_url))
-        print('\tServer respond with 200: {}'.format(
-            is_server_respond_with_200(site_url)))
-
-        expiration_date = get_domain_expiration_date(site_url)
-        print('\tExpiring in month: {}\n'.format(
-            is_expiration_in_month(expiration_date)))
+        is_response_ok = is_server_respond_with_200(site_url)
+        expiration_datetime = get_domain_expiration_date(site_url)
+        print_domain_info(
+            site_url,
+            is_response_ok,
+            is_expiration_in_month(expiration_datetime)
+        )
